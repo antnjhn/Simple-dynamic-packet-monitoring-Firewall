@@ -113,7 +113,7 @@ def update_graph():
     canvas.draw()
     root.after(1000, update_graph)
 root = Tk()
-root.title("NetGuard: Dynamic Packet Monitoring & Firewall")
+root.title("Dynamic Packet Monitoring & Firewall")
 root.geometry("1980x1080")
 root.iconbitmap("icon.ico")
 frame = Frame(root)
@@ -165,6 +165,29 @@ graph_option = StringVar(value="Packets by Protocol")
 graph_menu = ttk.Combobox(graph_frame, textvariable=graph_option, values=[
     "Packets by Protocol", "Packets by Source IP", "Packets by Destination IP","Packets by Destination Port"
 ], state="readonly", width=25)
+clear_button = Button(
+    frame,
+    text="Clear Logs",
+    command=lambda: clear_logs()
+)
+clear_button.pack(side=LEFT, padx=5)
+
+def clear_logs():
+    # Clear the Treeview (log table)
+    for item in tree.get_children():
+        tree.delete(item)
+    
+    # Reset all counters
+    packet_counter.clear()
+    src_ip_counter.clear()
+    dst_ip_counter.clear()
+    dst_port_counter.clear()
+    
+    # Clear the rules list display
+    rules_list.delete(0, END)
+    
+    # Reset the log label
+    log_label.config(text="Logs cleared. Monitoring continues.")
 
 graph_menu.pack(side=LEFT, padx=5)
 fig, ax = plt.subplots(figsize=(5, 3))
