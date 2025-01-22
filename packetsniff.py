@@ -42,30 +42,34 @@ def process_packet(packet):
             return
         tree.insert("", "end", values=(src_ip, dst_ip, protocol, dst_port))
         
+stop_event = threading.Event()
+
 def start_sniffing(interface):
-    sniff(iface=interface, prn=process_packet, filter="ip", store=0)
+    def packet_handler(packet):
+        if stop_event.is_set():  # Stop sniffing if the event is set
+            return True  # Returning True stops the sniff function
+        process_packet(packet)
+    sniff(iface=interface, prn=packet_handler, filter="ip", store=0)
 
 def start_sniffing_thread():
     interface = interface_entry.get().strip()
     if not interface:
         log_label.config(text="Please enter a network interface!")
         return
+    if stop_event.is_set():
+        log_label.config(text="Monitoring is already stopped. Restart monitoring.")
+        return
     log_label.config(text=f"Monitoring on interface: {interface}")
+    global sniff_thread
     sniff_thread = threading.Thread(target=start_sniffing, args=(interface,))
     sniff_thread.daemon = True
+    stop_event.clear()  # Clear the stop flag before starting
     sniff_thread.start()
-    global monitoring
-    monitoring = True  
-    def packet_handler(packet):
-        if not monitoring:  
-            return False  
-        process_packet(packet)
 
-    sniff(iface=interface, prn=packet_handler, filter="ip", store=0)
 def stop_sniffing():
-    global monitoring
-    monitoring = False  
+    stop_event.set()  # Set the stop flag
     log_label.config(text="Monitoring stopped.")
+
 
 def add_block_rule():
     protocol = protocol_entry.get().strip().lower()
