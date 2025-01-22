@@ -173,20 +173,13 @@ clear_button = Button(
 clear_button.pack(side=LEFT, padx=5)
 
 def clear_logs():
-    # Clear the Treeview (log table)
     for item in tree.get_children():
         tree.delete(item)
-    
-    # Reset all counters
     packet_counter.clear()
     src_ip_counter.clear()
     dst_ip_counter.clear()
     dst_port_counter.clear()
-    
-    # Clear the rules list display
     rules_list.delete(0, END)
-    
-    # Reset the log label
     log_label.config(text="Logs cleared. Monitoring continues.")
 
 graph_menu.pack(side=LEFT, padx=5)
