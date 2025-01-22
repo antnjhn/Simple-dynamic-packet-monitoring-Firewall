@@ -5,7 +5,7 @@ import threading
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from collections import Counter
-
+monitoring = False
 BLOCK_RULES = []
 packet_counter = Counter()
 src_ip_counter=Counter()
@@ -54,6 +54,19 @@ def start_sniffing_thread():
     sniff_thread = threading.Thread(target=start_sniffing, args=(interface,))
     sniff_thread.daemon = True
     sniff_thread.start()
+    global monitoring
+    monitoring = True  
+    def packet_handler(packet):
+        if not monitoring:  
+            return False  
+        process_packet(packet)
+
+    sniff(iface=interface, prn=packet_handler, filter="ip", store=0)
+def stop_sniffing():
+    global monitoring
+    monitoring = False  
+    log_label.config(text="Monitoring stopped.")
+
 def add_block_rule():
     protocol = protocol_entry.get().strip().lower()
     src_ip = src_ip_entry.get().strip()
@@ -165,6 +178,8 @@ graph_option = StringVar(value="Packets by Protocol")
 graph_menu = ttk.Combobox(graph_frame, textvariable=graph_option, values=[
     "Packets by Protocol", "Packets by Source IP", "Packets by Destination IP","Packets by Destination Port"
 ], state="readonly", width=25)
+stop_button = Button(frame, text="Stop Monitoring", command=stop_sniffing)
+stop_button.pack(side=LEFT, padx=5)
 clear_button = Button(
     frame,
     text="Clear Logs",
