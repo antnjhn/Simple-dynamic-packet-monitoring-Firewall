@@ -46,8 +46,8 @@ stop_event = threading.Event()
 
 def start_sniffing(interface):
     def packet_handler(packet):
-        if stop_event.is_set():  # Stop sniffing if the event is set
-            return True  # Returning True stops the sniff function
+        if stop_event.is_set():  
+            return True  
         process_packet(packet)
     sniff(iface=interface, prn=packet_handler, filter="ip", store=0)
 
@@ -132,7 +132,7 @@ def update_graph():
 root = Tk()
 root.title("Dynamic Packet Monitoring & Firewall")
 root.geometry("1980x1080")
-root.iconbitmap("icon.ico")
+root.iconbitmap("icon.ico")#if any problem aroses after trying to run this program do make this code a command for smooth performance
 frame = Frame(root)
 frame.pack(pady=10)
 Label(frame, text="Network Interface:").pack(side=LEFT, padx=5)
