@@ -19,7 +19,6 @@ stop_event = threading.Event()
 src_mac_counter = Counter()
 dst_mac_counter = Counter()
 
-# UDP attack detection globals
 udp_packets = defaultdict(deque)
 udp_threshold = 100  
 TIME_WINDOW = 1      
@@ -60,10 +59,6 @@ def show_udp_attack_popup(src_ip):
     Button(popup, text="OK", command=popup.destroy).pack(pady=10)
 
 def block_ip(src_ip):
-    """
-    Block traffic from src_ip by adding it to the blocked_ips set,
-    update the GUI list, and issue an iptables command (Linux).
-    """
     if src_ip not in blocked_ips:
         blocked_ips.add(src_ip)
         update_blocked_list()
@@ -96,7 +91,6 @@ def process_packet(packet):
         elif UDP in packet:
             protocol = "UDP"
             dst_port = packet[UDP].dport
-            # --- UDP Attack Detection Logic ---
             current_time = time.time()
             udp_packets[src_ip].append(current_time)
             while udp_packets[src_ip] and current_time - udp_packets[src_ip][0] > TIME_WINDOW:
@@ -373,8 +367,6 @@ clear_button = Button(frame, text="Clear Logs", command=clear_logs)
 clear_button.pack(side=LEFT, padx=5)
 log_label = Label(root, text="", fg="blue")
 log_label.pack()
-
-# Elapsed Time Label
 elapsed_time_label = Label(root, text="Elapsed Time: 0 sec", fg="green")
 elapsed_time_label.pack(pady=5)
 
@@ -403,8 +395,6 @@ add_rule_button = Button(block_frame, text="Add Block Rule", command=add_block_r
 add_rule_button.grid(row=0, column=8, padx=10, pady=5)
 rules_list = Listbox(root, height=5)
 rules_list.pack(fill=X, pady=10)
-
-# Blocked IPs Listbox
 blocked_frame = Frame(root)
 blocked_frame.pack(pady=10, fill=X)
 Label(blocked_frame, text="Blocked IPs:").pack(side=LEFT, padx=5)
