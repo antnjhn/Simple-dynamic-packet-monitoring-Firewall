@@ -29,7 +29,7 @@ Before getting started, ensure your system has the following:
 -   **iptables:** For applying firewall rules.
 -   **Admin Privileges:** Required to monitor network traffic and apply iptables rules.
 
-Install the necessary packages on Ubuntu:
+Install the necessary packages:
 
 ```sh
 sudo apt update
