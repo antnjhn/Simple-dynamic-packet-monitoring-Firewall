@@ -142,7 +142,7 @@ If the graph does not update, verify your system's graphical backend for Matplot
 
 ### iptables Verification
 
-Use `iptables -L` to check if firewall rules are applied correctly.
+Use `iptables -L` to check if firewall rules are applied correctly(FOR LINUX USERS).
 
 ## Contributing
 
